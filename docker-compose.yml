@@ -1,0 +1,32 @@
+version: '2'
+volumes:
+  glpi-files:
+  glpi-plugins:
+services:
+  mariadb:
+    image: registry.cn-hangzhou.aliyuncs.com/yangb/glpi-mariadb
+    container_name: mariadb
+    environment:
+      MYSQL_DATABASE: glpi
+      MYSQL_PASSWORD: root1234 
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_USER: glpi
+    volumes:
+    - /opt/mysql-data:/var/lib/mysql
+    - /etc/localtime:/etc/localtime:ro
+    ports:
+    - 3306:3306/tcp
+    restart: always
+  glpi:
+    image: registry.cn-hangzhou.aliyuncs.com/yangb/glpi-web
+    container_name: glpi
+    volumes:
+    - glpi-files:/var/www/html/files
+    - glpi-plugins:/var/www/html/plugins
+    - /etc/localtime:/etc/localtime:ro
+    links:
+    - mariadb:mysql
+    ports:
+    - 80:80/tcp
+    restart: always
+    
